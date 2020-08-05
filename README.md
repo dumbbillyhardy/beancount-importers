@@ -9,7 +9,7 @@ can just generate this file from scratch whenever I want. From there, the plan i
 taking backups along the way and making account balance assertions.
 
 ## How someone else should get started
-Install all of the relevant (beancount)[https://beancount.github.io/docs/] stuff and then
+Install all of the relevant [beancount](https://beancount.github.io/docs/) stuff and then
 clone this repo. Alter the `example_config.py` to something that makes sense to you.
 You will also need to pip3 install dateutil and titlecase.
 
