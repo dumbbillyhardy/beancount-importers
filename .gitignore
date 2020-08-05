@@ -3,3 +3,4 @@ config.py
 bank_downloads
 working
 *.beancount
+.*.picklecache
