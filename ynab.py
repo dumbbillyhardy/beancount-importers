@@ -14,6 +14,9 @@ import csv
 import os
 import re
 
+def removeWhitespace(str):
+    return str.replace(" ", "")
+
 class YnabImporter(importer.ImporterProtocol):
     def __init__(self, account_mapping):
         self.account_mapping = account_mapping
@@ -29,8 +32,7 @@ class YnabImporter(importer.ImporterProtocol):
 
         with open(f.name) as f:
             for index, row in enumerate(csv.DictReader(f)):
-                account = row['\ufeffAccount']
-                to_account = row['Category']
+                account = removeWhitespace(row['\ufeffAccount'])
 
                 date = parse(row['Date']).date()
                 desc = titlecase(row['Payee'])
@@ -38,8 +40,16 @@ class YnabImporter(importer.ImporterProtocol):
                 outflow = row['Inflow'][1:]
                 amt = amount.Amount(D('-'+inflow if inflow != '0.00' else outflow), 'USD')
 
-                if desc.find("Transfer : ") != -1:
-                    to_account = desc[11:]
+                group = removeWhitespace(row['Category Group'])
+                category = removeWhitespace(row['Category'])
+
+                if desc.find("Transfer : ") != -1 and account != self.main_account:
+                    # Let other accounts handle transfers.
+                    to_account = removeWhitespace(desc[11:].replace("Transfer : ", ""))
+                elif group == "Inflow":
+                    to_account = "Equity:Opening-Balances"
+                else: 
+                    to_account = "Expenses:"+group+":"+category
 
                 meta = data.new_metadata(f.name, index)
 
