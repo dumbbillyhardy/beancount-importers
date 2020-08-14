@@ -4,7 +4,6 @@ from dateutil.parser import parse
 
 from titlecase import titlecase
 
-import csv
 import os
 import re
 
