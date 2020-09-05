@@ -22,4 +22,4 @@ class DiscoverImporter(AutoPayCard):
             return row['BudgetCategory']
         return None
     def isPayment(self, row):
-        return row['Description'] == 'DIRECTPAY FULL BALANCESEE DETAILS OF YOUR NEXT DIRECTPAY BELOW'
+        return row['Description'].find('DIRECTPAY FULL BALANCE') != -1
