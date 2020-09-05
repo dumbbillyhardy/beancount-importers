@@ -8,9 +8,6 @@ import os
 import re
 
 class DiscoverImporter(AutoPayCard):
-    def identify(self, f):
-        return re.match('Discover-.*\.csv', os.path.basename(f.name))
-
     def getDate(self, row):
         return parse(row['Trans. Date']).date()
     def getDesc(self, row):

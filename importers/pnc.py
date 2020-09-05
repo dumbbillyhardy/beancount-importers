@@ -20,10 +20,7 @@ class PncImporter(importer.ImporterProtocol):
         self.filePattern = filePattern
 
     def identify(self, f):
-        if not re.match(self.filePattern + '.*\.csv', os.path.basename(f.name)):
-            return False
-
-        return True
+        return re.match(self.filePattern + '.*\.csv', os.path.basename(f.name))
 
     def extract(self, f):
         entries = []

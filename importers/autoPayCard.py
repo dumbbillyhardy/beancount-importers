@@ -1,5 +1,6 @@
+from .baseAccount import BaseAccount
+
 from beancount.core.number import D
-from beancount.ingest import importer
 from beancount.core import account
 from beancount.core import amount
 from beancount.core import flags
@@ -9,24 +10,16 @@ from beancount.core.position import Cost
 import datetime
 import calendar
 import csv
-import os
 
-class AutoPayCard(importer.ImporterProtocol):
-    def __init__(self, account, autoPayAccount, statementCloseDay, paymentDay):
+class AutoPayCard(BaseAccount):
+    def __init__(self, filePattern, account, autoPayAccount, statementCloseDay, paymentDay):
+        self.filePattern = filePattern
         self.account = account
         self.autoPayAccount = autoPayAccount
         self.statementCloseDay = statementCloseDay
         self.paymentDay = paymentDay
         self.payments = dict([])
 
-    def getDate(row):
-        pass
-    def getDesc(row):
-        pass
-    def getAmt(row):
-        pass
-    def getCategory(row):
-        pass
     def isPayment(self, row):
         pass
 
@@ -47,36 +40,6 @@ class AutoPayCard(importer.ImporterProtocol):
 
         entries.extend(self.payments.values())
         return entries
-
-    def extractRow(self, row, meta):
-        trans_date = self.getDate(row)
-        trans_desc = self.getDesc(row)
-        trans_amt  = self.getAmt(row)
-        trans_category = self.getCategory(row)
-
-        txn = data.Transaction(
-            meta=meta,
-            date=trans_date,
-            flag=flags.FLAG_OKAY,
-            payee=trans_desc,
-            narration="",
-            tags=set(),
-            links=set(),
-            postings=[
-                data.Posting(
-                    self.account,
-                    amount.Amount(-1*D(trans_amt), 'USD'),
-                    None, None, None, None
-                ),
-            ],
-        )
-        if trans_category is not None:
-            txn.postings.append(data.Posting(
-                "Liabilities:"+trans_category,
-                amount.Amount(D(trans_amt), 'USD'),
-                None, None, None, None
-            ))
-        return txn
 
     def addPaymentFor(self, txn, trans_date, trans_amt, trans_category):
         months_to_add = 1 if trans_date.day > self.statementCloseDay else 0
@@ -104,7 +67,6 @@ class AutoPayCard(importer.ImporterProtocol):
 
 
         self.payments[payment_date.isoformat()] = paymentTxn
-
 
 
 def preparePayAccount(account, category):

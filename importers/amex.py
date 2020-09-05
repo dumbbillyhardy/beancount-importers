@@ -7,12 +7,6 @@ import re
 import os
 
 class AmexImporter(AutoPayCard):
-    def identify(self, f):
-        if not re.match('amex.*\.csv', os.path.basename(f.name)):
-            return False
-
-        return True
-
     def getDate(self, row):
         return parse(row['Date']).date()
     def getDesc(self, row):
