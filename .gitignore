@@ -1,6 +1,8 @@
 __pycache__
 config.py
 bank_downloads
+archive_bank_downloads
 working
 *.beancount
 .*.picklecache
+.*.swp
