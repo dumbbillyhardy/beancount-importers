@@ -60,20 +60,13 @@ class AutoPayCard(BaseAccount):
                   )]
                 )
         paymentTxn.postings.extend([
-            data.Posting(preparePayAccount(self.autoPayAccount, trans_category),
+            data.Posting(self.autoPayAccount,
                 amount.Amount(-1*D(trans_amt), 'USD'),
                 None, None, None, None
             ),
         ])
 
-
         self.payments[payment_date.isoformat()] = paymentTxn
-
-
-def preparePayAccount(account, category):
-    if category is not None:
-        return account+":Month:"+category
-    return account
 
 def add_months(sourcedate, months):
     month = sourcedate.month - 1 + months
