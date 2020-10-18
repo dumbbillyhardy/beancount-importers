@@ -4,7 +4,6 @@ from dateutil.parser import parse
 from titlecase import titlecase
 
 import re
-import os
 
 class AmexImporter(AutoPayCard):
     def getDate(self, row):
@@ -13,9 +12,5 @@ class AmexImporter(AutoPayCard):
         return titlecase(row['Description'])
     def getAmt(self, row):
         return row['Amount']
-    def getCategory(self, row):
-        if 'BudgetCategory' in row:
-            return row['BudgetCategory']
-        return None
     def isPayment(self, row):
-        return row['Description'] == "Online Payment - Thank You" or  row['Description'] == "Payment Received - Thank You"
+        return row['Description'].find('AUTOPAY PAYMENT - THANK YOU') != -1

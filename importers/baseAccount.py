@@ -22,14 +22,24 @@ class BaseAccount(importer.ImporterProtocol):
         pass
     def getAmt(row):
         pass
-    def getCategory(row):
-        pass
+    def getCategory(self, row):
+        if 'BudgetCategory' in row:
+            return row['BudgetCategory']
+        return None
+    def getMemo(self, row):
+        if 'Memo' in row:
+            return row['Memo']
+        return None
+    def isDone(self, row):
+        return row['Done'] == 'true' if 'Done' in row else False
 
     def extract(self, f):
         entries = []
 
         with open(f.name) as f:
             for index, row in enumerate(csv.DictReader(f)):
+                if(self.isDone(row)):
+                    continue
                 meta = data.new_metadata(f.name, index)
 
                 txn = self.extractRow(row, meta)
@@ -48,7 +58,7 @@ class BaseAccount(importer.ImporterProtocol):
             date=trans_date,
             flag=flags.FLAG_OKAY,
             payee=trans_desc,
-            narration="",
+            narration=self.getMemo(row),
             tags=set(),
             links=set(),
             postings=[

@@ -12,12 +12,13 @@ import calendar
 import csv
 
 class AutoPayCard(BaseAccount):
-    def __init__(self, filePattern, account, autoPayAccount, statementCloseDay, paymentDay):
+    def __init__(self, filePattern, account, autoPayAccount, statementCloseDay, paymentDay, paymentMonthOffset):
         self.filePattern = filePattern
         self.account = account
         self.autoPayAccount = autoPayAccount
         self.statementCloseDay = statementCloseDay
         self.paymentDay = paymentDay
+        self.paymentMonthOffset = paymentMonthOffset
         self.payments = dict([])
 
     def isPayment(self, row):
@@ -28,7 +29,7 @@ class AutoPayCard(BaseAccount):
 
         with open(f.name) as f:
             for index, row in enumerate(csv.DictReader(f)):
-                if self.isPayment(row):
+                if self.isPayment(row) or self.isDone(row):
                     continue
 
                 meta = data.new_metadata(f.name, index)
@@ -42,7 +43,7 @@ class AutoPayCard(BaseAccount):
         return entries
 
     def addPaymentFor(self, txn, trans_date, trans_amt, trans_category):
-        months_to_add = 1 if trans_date.day > self.statementCloseDay else 0
+        months_to_add = self.paymentMonthOffset + (1 if trans_date.day > self.statementCloseDay else 0)
         payment_date = set_days(add_months(trans_date, months_to_add), self.paymentDay)
         
         paymentTxn = self.payments[payment_date.isoformat()] if payment_date.isoformat() in self.payments else data.Transaction(
@@ -53,12 +54,12 @@ class AutoPayCard(BaseAccount):
                 narration="",
                 tags=set(),
                 links=set(),
-                postings=[])
+                postings=[
+                  data.Posting(self.account,
+                      None, None, None, None, None
+                  )]
+                )
         paymentTxn.postings.extend([
-            data.Posting(self.account,
-                amount.Amount(D(trans_amt), 'USD'), 
-                None, None, None, None
-            ),
             data.Posting(preparePayAccount(self.autoPayAccount, trans_category),
                 amount.Amount(-1*D(trans_amt), 'USD'),
                 None, None, None, None

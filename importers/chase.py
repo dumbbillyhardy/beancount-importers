@@ -10,10 +10,6 @@ class ChaseCCImporter(AutoPayCard):
     def getDesc(self, row):
         return titlecase(row['Description'])
     def getAmt(self, row):
-        return row['Amount']
-    def getCategory(self, row):
-        if 'BudgetCategory' in row:
-            return row['BudgetCategory']
-        return None
+        return row['Amount'] if row['Amount'][0] != '-' else row['Amount'][1:]
     def isPayment(self, row):
-        return row['Description'] == "AUTOMATIC PAYMENT - THANK"
+        return row['Description'].find("AUTOMATIC PAYMENT - THANK") != -1

@@ -4,9 +4,6 @@ from dateutil.parser import parse
 
 from titlecase import titlecase
 
-import os
-import re
-
 class DiscoverImporter(AutoPayCard):
     def getDate(self, row):
         return parse(row['Trans. Date']).date()
@@ -14,9 +11,5 @@ class DiscoverImporter(AutoPayCard):
         return titlecase(row['Description'])
     def getAmt(self, row):
         return row['Amount']
-    def getCategory(self, row):
-        if 'BudgetCategory' in row:
-            return row['BudgetCategory']
-        return None
     def isPayment(self, row):
         return row['Description'].find('DIRECTPAY FULL BALANCE') != -1
