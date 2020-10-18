@@ -1,10 +1,10 @@
-from .autoPayCard import AutoPayCard
+from .baseAccount import BaseAccount
 
 from dateutil.parser import parse
 
 from titlecase import titlecase
 
-class DiscoverImporter(AutoPayCard):
+class DiscoverImporter(BaseAccount):
     def getDate(self, row):
         return parse(row['Trans. Date']).date()
     def getDesc(self, row):

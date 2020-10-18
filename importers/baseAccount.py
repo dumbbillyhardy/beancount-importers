@@ -22,23 +22,23 @@ class BaseAccount(importer.ImporterProtocol):
         pass
     def getAmt(row):
         pass
-    def getCategory(self, row):
-        if 'BudgetCategory' in row:
-            return row['BudgetCategory']
+    def getAccount(self, row):
+        if 'BudgetAccount' in row:
+            return row['BudgetAccount']
         return None
     def getMemo(self, row):
         if 'Memo' in row:
             return row['Memo']
         return None
-    def isDone(self, row):
-        return row['Done'] == 'true' if 'Done' in row else False
+    def skip(self, row):
+        return row['Skip'] == 'true' if 'Skip' in row else False
 
     def extract(self, f):
         entries = []
 
         with open(f.name) as f:
             for index, row in enumerate(csv.DictReader(f)):
-                if(self.isDone(row)):
+                if(self.skip(row)):
                     continue
                 meta = data.new_metadata(f.name, index)
 
@@ -51,7 +51,7 @@ class BaseAccount(importer.ImporterProtocol):
         trans_date = self.getDate(row)
         trans_desc = self.getDesc(row)
         trans_amt  = self.getAmt(row)
-        trans_category = self.getCategory(row)
+        account = self.getAccount(row)
 
         txn = data.Transaction(
             meta=meta,
@@ -69,9 +69,9 @@ class BaseAccount(importer.ImporterProtocol):
                 ),
             ],
         )
-        if trans_category is not None:
+        if account is not None:
             txn.postings.append(data.Posting(
-                trans_category,
+                account,
                 amount.Amount(D(trans_amt), 'USD'),
                 None, None, None, None
             ))

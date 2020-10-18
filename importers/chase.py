@@ -1,10 +1,10 @@
-from .autoPayCard import AutoPayCard
+from .baseAccount import BaseAccount
 
 from dateutil.parser import parse
 
 from titlecase import titlecase
 
-class ChaseCCImporter(AutoPayCard):
+class ChaseCCImporter(BaseAccount):
     def getDate(self, row):
         return parse(row['Transaction Date']).date()
     def getDesc(self, row):
