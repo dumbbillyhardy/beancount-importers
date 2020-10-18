@@ -71,7 +71,7 @@ class BaseAccount(importer.ImporterProtocol):
         )
         if trans_category is not None:
             txn.postings.append(data.Posting(
-                "Expenses:"+trans_category,
+                trans_category,
                 amount.Amount(D(trans_amt), 'USD'),
                 None, None, None, None
             ))

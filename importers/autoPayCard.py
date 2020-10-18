@@ -36,13 +36,13 @@ class AutoPayCard(BaseAccount):
 
                 txn = self.extractRow(row, meta)
                 entries.append(txn)
-                self.addPaymentFor(txn, self.getDate(row), self.getAmt(row), self.getCategory(row))
+                self.addPaymentFor(txn, self.getDate(row), self.getAmt(row))
 
 
         entries.extend(self.payments.values())
         return entries
 
-    def addPaymentFor(self, txn, trans_date, trans_amt, trans_category):
+    def addPaymentFor(self, txn, trans_date, trans_amt):
         months_to_add = self.paymentMonthOffset + (1 if trans_date.day > self.statementCloseDay else 0)
         payment_date = set_days(add_months(trans_date, months_to_add), self.paymentDay)
         

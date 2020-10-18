@@ -10,6 +10,6 @@ class ChaseCCImporter(AutoPayCard):
     def getDesc(self, row):
         return titlecase(row['Description'])
     def getAmt(self, row):
-        return row['Amount'] if row['Amount'][0] != '-' else row['Amount'][1:]
+        return '-'+row['Amount'] if row['Amount'][0] != '-' else row['Amount'][1:]
     def isPayment(self, row):
         return row['Description'].find("AUTOMATIC PAYMENT - THANK") != -1
